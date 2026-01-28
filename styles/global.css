@@ -91,7 +91,7 @@ header .btn-instagram:active {
     background: #2d1a0f;
     color: #fff;
     text-decoration: none !important;
-    transform: scale(1.05);
+    transform: scale(1.03);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     outline: none;
 }
