@@ -1222,25 +1222,45 @@ function clearCart() {
 
 function finalizeOrder() {
     if (carrinho.size === 0) return;
-    const lines = ["Olá! Quero fazer um pedido:\n"];
+
+    // Helper to clean BRL non-breaking spaces and symbols
+    const cleanBRL = (val) => formatBRL(val).replace(/\u00a0/g, " ");
+
+    let msg = "PEDIDO RECEBIDO - QUEIJOS BENAI\r\n\r\n";
+    msg += "ITENS DO PEDIDO:\r\n\r\n";
+
     let total = 0;
 
     carrinho.forEach(({ name, price, qty }) => {
         const subtotal = price * qty;
         total += subtotal;
-        lines.push(`- ${name} | ${formatBRL(price)} x ${qty} = ${formatBRL(subtotal)}`);
+
+        msg += "• QUEIJO: " + name.toUpperCase() + "\r\n";
+        msg += "  Qtd: " + qty + " x " + cleanBRL(price) + "\r\n";
+        msg += "  Subtotal: " + cleanBRL(subtotal) + "\r\n";
+        msg += "--------------------------------\r\n\r\n";
     });
 
-    lines.push("", `*Total do pedido: ${formatBRL(total)}*`);
+    msg += "--------------------------------\r\n";
+    msg += "TOTAL A PAGAR: " + cleanBRL(total) + "\r\n";
+    msg += "--------------------------------\r\n\r\n";
 
-    const message = encodeURIComponent(lines.join("\n"));
+    msg += "DADOS PARA PAGAMENTO (PIX):\r\n";
+    msg += "Chave CPF: 725.820.576-49\r\n";
+    msg += "Banco: Sicoob Credifor\r\n";
+    msg += "Nome: Onesio Marques\r\n\r\n";
+
+    msg += "Mande o comprovante aqui quando fizer!\r\n\r\n";
+    msg += "Obrigado pela preferência!";
+
     const phone = "5537991243408";
-    window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
+    const url = "https://api.whatsapp.com/send?phone=" + phone + "&text=" + encodeURIComponent(msg);
+    window.open(url, "_blank");
+
     carrinho.clear();
     saveCart(carrinho);
     syncGrid();
     renderCart();
-    console.log("Pedido finalizado:", lines.join("\n"));
 }
 
 // Inicialização
